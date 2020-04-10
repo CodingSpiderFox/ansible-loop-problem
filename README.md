@@ -1,1 +1,1 @@
-# ansbile
+Code for stackexchange issue https://devops.stackexchange.com/questions/11297/ansible-seems-to-execute-infinite-loop
