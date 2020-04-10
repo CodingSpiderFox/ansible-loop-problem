@@ -1,0 +1,4 @@
+---
+- hosts: storageservers
+  roles:
+    - { role: gluster-node, tags: ["gluster-node"] }

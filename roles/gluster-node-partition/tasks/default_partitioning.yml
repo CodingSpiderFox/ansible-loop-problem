@@ -1,0 +1,33 @@
+
+---
+# tasks file for gluster-node
+- include_role:
+    name: gluster-node-partition
+    tasks_from: single_partition
+  vars:
+    device_name: '/dev/sdb'
+    partition_name: 'data1'
+
+- name: Create data1 partition
+  include_role:
+    name: gluster-node-partition
+    tasks_from: single_partition
+  vars:
+    device_name: '/dev/sdb'
+    partition_name: 'data1'
+
+- name: Create data2 partition
+  include_role:
+    name: gluster-node-partition
+    tasks_from: single_partition
+  vars:
+    device_name: '/dev/sdc'
+    partition_name: 'data2'
+
+- name: Create data3 partition
+  include_role:
+    name: gluster-node-partition
+    tasks_from: single_partition
+  vars:
+    device_name: '/dev/sdd'
+    partition_name: 'data3'

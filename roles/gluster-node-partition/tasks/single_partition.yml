@@ -1,0 +1,30 @@
+---
+# tasks file for gluster-node-partition
+- name: 'Create {{ partition_name }} partition'
+  parted:
+    device: '{{ device_name }}'
+    number: 1
+    label: gpt
+    name: '{{ partition_name }}'
+    state: present
+  become: true
+
+- name: 'Create filesystem on {{ partition_name }} partition'
+  filesystem:
+    fstype: btrfs
+    dev: '{{ device_name }}1' #should expand to something like '/dev/sdb1'
+  become: true
+
+- name: 'Create mount point for {{ partition_name }} partition'
+  file:
+    path: '/{{ partition_name }}'
+    state: directory
+  become: true
+
+- name: 'Mount {{ partition_name }} partition'
+  mount:
+    path: '/{{ partition_name }}'
+    src: 'LABEL={{ partition_name }}'
+    fstype: btrfs
+    state: present
+  become: true

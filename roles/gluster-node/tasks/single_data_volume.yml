@@ -1,0 +1,64 @@
+
+---
+# tasks file for single_data_volume
+- include_role:
+    name: gluster-node-partition
+    tasks_from: default_partitioning
+
+- name: Update apt-get repo and cache
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  vars:
+    ansible_become: true
+
+- name: Upgrade all apt packages
+  apt: upgrade=dist force_apt_get=yes
+  vars:
+    ansible_become: true
+
+- name: Install GlusterFS
+  apt:
+    name:
+      - glusterfs-server
+      - glusterfs-client
+      - glusterfs-common
+      - nfs-kernel-server
+    state: present
+    autoclean: yes
+  become: true
+
+- name: Enable GlusterFS on Boot
+  service: "name={{ glusterfs_daemon }} state=started enabled=yes"
+  become: true
+
+- name: Probe GlusterFS Nodes
+  shell: "gluster peer probe {{ item }}"
+  with_items: "{{ groups['storageservers'] }}"
+  become: true
+
+- name: Ensure Gluster brick and mount directories exist.
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+    - "{{ gluster_brick_dir }}"
+    - "{{ gluster_mount_dir }}"
+  become: true
+
+- name: Configure Gluster volume.
+  gluster_volume:
+    state: present
+    name: "{{ gluster_brick_name }}"
+    brick: "{{ gluster_brick_dir }}"
+    replicas: 2
+    cluster: "{{ groups.storageservers | join(',') }}"
+    host: "{{ inventory_hostname }}"
+    force: yes
+  run_once: true
+  become: true
+
+- name: Ensure Gluster volume is mounted.
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    fstype: glusterfs
+    opts: "defaults,_netdev"
+    state: mounted
+  become: true

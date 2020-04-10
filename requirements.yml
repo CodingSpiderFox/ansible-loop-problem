@@ -1,0 +1,4 @@
+---
+roles:
+  - geerlingguy.firewall
+  - geerlingguy.glusterfs
