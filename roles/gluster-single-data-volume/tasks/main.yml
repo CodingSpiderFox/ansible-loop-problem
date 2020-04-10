@@ -1,9 +1,14 @@
 
 ---
-# tasks file for single_data_volume
-- include_role:
+# tasks file for gluster-single-data-volume
+
+- name: 'Create {{ a_partition_name }} partition'
+  include_role:
     name: gluster-node-partition
-    tasks_from: default_partitioning
+    tasks_from: single_partition
+  vars:
+    device_name: '{{ a_device_name }}'
+    partition_name: '{{ a_partition_name }}'
 
 - name: Update apt-get repo and cache
   apt: update_cache=yes force_apt_get=yes cache_valid_time=3600

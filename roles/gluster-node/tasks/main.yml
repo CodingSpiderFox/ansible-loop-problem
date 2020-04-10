@@ -1,43 +1,35 @@
 
 ---
-# tasks file for single_data_volume
-- include_role:
-    name: gluster-node
-    tasks_from: single_data_volume
+# tasks file for gluster-node
+- name: Create gluster volume for partition 1
+  include_role:
+    name: gluster-single-data-volume
   vars:
-    gluster_brick_dir: '/data1'
-    gluster_mount_dir: '/gluster_volume1'
+    a_device_name: '/dev/sdb'
+    a_partition_name: 'data1'
+    gluster_brick_dir: '/{{ a_partition_name }}/glusterbrick1'
+    gluster_mount_dir: /gluster_volume1
     gluster_brick_name: 'brick1'
     glusterfs_daemon: 'glusterd'
 
-- include_role:
-    name: gluster-node-partition
-    tasks_from: default_partitioning
-
-- name: Create default partitioning
-  include_role:
-    name: gluster-node-partition
-
-- name: Create gluster volume for partition 1
-  include_role:
-    name: gluster-node
-  vars:
-    gluster_brick_dir: /data1/glusterbrick1
-    gluster_mount_dir: /gluster_volume1
-    gluster_brick_name: 'brick1'
-
 - name: Create gluster volume for partition 2
   include_role:
-    name: gluster-node
+    name: gluster-single-data-volume
   vars:
-    gluster_brick_dir: /data1/glusterbrick2
+    a_device_name: '/dev/sdc'
+    a_partition_name: 'data2'
+    gluster_brick_dir: '/{{ a_partition_name }}/glusterbrick2'
     gluster_mount_dir: /gluster_volume2
     gluster_brick_name: 'brick2'
+    glusterfs_daemon: 'glusterd'
 
 - name: Create gluster volume for partition 3
   include_role:
-    name: gluster-node
+    name: gluster-single-data-volume
   vars:
-    gluster_brick_dir: /data1/glusterbrick3
+    a_device_name: '/dev/sdd'
+    a_partition_name: 'data3'
+    gluster_brick_dir: '/{{ a_partition_name }}/glusterbrick3'
     gluster_mount_dir: /gluster_volume3
     gluster_brick_name: 'brick3'
+    glusterfs_daemon: 'glusterd'
